@@ -26,15 +26,15 @@ public class Diagnostic
     public override string ToString() => $"[Line {Line}:{Column}] {Severity}: {Message}";
 }
 
-public class DiagnosticCollector : IEnumerable<Diagnostic>
+public class DiagnosticList : IEnumerable<Diagnostic>
 {
     private readonly List<Diagnostic> _diagnostics = new();
 
     public IEnumerator<Diagnostic> GetEnumerator() => _diagnostics.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    public bool Any => _diagnostics.Count > 0;
     public bool HasErrors => _diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error);
-    public bool Any() => _diagnostics.Any();
 
     public void Report(int line, int column, string message, DiagnosticSeverity severity = DiagnosticSeverity.Error)
     {

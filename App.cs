@@ -35,9 +35,9 @@ public class App
         string source = File.ReadAllText(path);
         var executionResult = _engine.Execute(source);
 
-        if (executionResult.Diagnostics.HasErrors)
+        if (executionResult.DiagnosticList.HasErrors)
         {
-            PrintDiagnostics(executionResult.Diagnostics);
+            PrintDiagnostics(executionResult.DiagnosticList);
             Environment.Exit(65);
         }
 
@@ -66,12 +66,12 @@ public class App
 
             var executionResult = _engine.Execute(line);
 
-            if (executionResult.Diagnostics.Any())
+            if (executionResult.DiagnosticList.Any)
             {
-                PrintDiagnostics(executionResult.Diagnostics);
+                PrintDiagnostics(executionResult.DiagnosticList);
             }
 
-            if (!executionResult.Diagnostics.HasErrors)
+            if (!executionResult.DiagnosticList.HasErrors)
             {
                 PrintValue(executionResult.Value);
             }
@@ -87,9 +87,9 @@ public class App
         Console.ResetColor();
     }
 
-    private static void PrintDiagnostics(DiagnosticCollector diagnostics)
+    private static void PrintDiagnostics(DiagnosticList diagnosticList)
     {
-        foreach (var diagnostic in diagnostics)
+        foreach (var diagnostic in diagnosticList)
         {
             Console.ForegroundColor = diagnostic.Severity == DiagnosticSeverity.Error
                 ? ConsoleColor.Red

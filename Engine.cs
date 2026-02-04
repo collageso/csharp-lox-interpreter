@@ -4,12 +4,12 @@ namespace LoxInterpreter.Engine;
 
 public class ExecutionResult
 {
-    public DiagnosticCollector Diagnostics { get; }
+    public DiagnosticList DiagnosticList { get; }
     public object? Value { get; }
 
-    public ExecutionResult(DiagnosticCollector diagnostics, object? value)
+    public ExecutionResult(DiagnosticList diagnosticList, object? value)
     {
-        Diagnostics = diagnostics;
+        DiagnosticList = diagnosticList;
         Value = value;
     }
 }
@@ -19,8 +19,8 @@ public class Engine
 
     public ExecutionResult Execute(string source)
     {
-        var diagnostics = new DiagnosticCollector();
+        var diagnosticList = new DiagnosticList();
         object? result = source;
-        return new ExecutionResult(diagnostics, result);
+        return new ExecutionResult(diagnosticList, result);
     }
 }
