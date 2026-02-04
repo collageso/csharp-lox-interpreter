@@ -1,15 +1,17 @@
-using LoxInterpreter.Diagnostic;
+using LoxInterpreter.Reporting;
+using LoxInterpreter.Scanning;
+using LoxInterpreter.Abstractions;
 
-namespace LoxInterpreter.Engine;
+namespace LoxInterpreter.Runtime;
 
 public class ExecutionResult
 {
-    public DiagnosticList DiagnosticList { get; }
+    public DiagnosticManager DiagnosticManager { get; }
     public object? Value { get; }
 
-    public ExecutionResult(DiagnosticList diagnosticList, object? value)
+    public ExecutionResult(DiagnosticManager diagnosticManager, object? value)
     {
-        DiagnosticList = diagnosticList;
+        DiagnosticManager = diagnosticManager;
         Value = value;
     }
 }
@@ -19,8 +21,10 @@ public class Engine
 
     public ExecutionResult Execute(string source)
     {
-        var diagnosticList = new DiagnosticList();
-        object? result = source;
-        return new ExecutionResult(diagnosticList, result);
+        var diagnosticManager = new DiagnosticManager();
+        var lexer = new Lexer(source, diagnosticManager);
+        List<Token> tokens = lexer.ScanTokens();
+
+        return new ExecutionResult(diagnosticManager, tokens);
     }
 }

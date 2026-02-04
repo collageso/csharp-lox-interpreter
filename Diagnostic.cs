@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace LoxInterpreter.Diagnostic;
+namespace LoxInterpreter.Reporting;
 
 public enum DiagnosticSeverity
 {
@@ -26,7 +26,7 @@ public class Diagnostic
     public override string ToString() => $"[Line {Line}:{Column}] {Severity}: {Message}";
 }
 
-public class DiagnosticList : IEnumerable<Diagnostic>
+public class DiagnosticManager : IEnumerable<Diagnostic>
 {
     private readonly List<Diagnostic> _diagnostics = new();
 

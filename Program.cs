@@ -1,9 +1,10 @@
-﻿using LoxInterpreter.Diagnostic;
-using LoxInterpreter.Engine;
+﻿using LoxInterpreter.Reporting;
+using LoxInterpreter.Runtime;
+using LoxInterpreter.Abstractions;
 
-namespace App;
+namespace LoxInterpreter.Cli;
 
-public class App
+public class Program
 {
     private static readonly Engine _engine = new();
 
@@ -33,15 +34,15 @@ public class App
         }
 
         string source = File.ReadAllText(path);
-        var executionResult = _engine.Execute(source);
+        var result = _engine.Execute(source);
 
-        if (executionResult.DiagnosticList.HasErrors)
+        if (result.DiagnosticManager.HasErrors)
         {
-            PrintDiagnostics(executionResult.DiagnosticList);
+            PrintDiagnostics(result.DiagnosticManager);
             Environment.Exit(65);
         }
 
-        PrintValue(executionResult.Value);
+        PrintValue(result.Value);
     }
 
     private static void RunPrompt()
@@ -64,16 +65,16 @@ public class App
                 continue;
             }
 
-            var executionResult = _engine.Execute(line);
+            var result = _engine.Execute(line);
 
-            if (executionResult.DiagnosticList.Any)
+            if (result.DiagnosticManager.Any)
             {
-                PrintDiagnostics(executionResult.DiagnosticList);
+                PrintDiagnostics(result.DiagnosticManager);
             }
 
-            if (!executionResult.DiagnosticList.HasErrors)
+            if (!result.DiagnosticManager.HasErrors)
             {
-                PrintValue(executionResult.Value);
+                PrintValue(result.Value);
             }
         }
     }
@@ -83,13 +84,25 @@ public class App
         if (value == null) return;
 
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(value.ToString());
+
+        if (value is IEnumerable<Token> tokens)
+        {
+            foreach (var token in tokens)
+            {
+                Console.WriteLine(token.ToString());
+            }
+        }
+        else
+        {
+            Console.WriteLine(value.ToString());
+        }
+
         Console.ResetColor();
     }
 
-    private static void PrintDiagnostics(DiagnosticList diagnosticList)
+    private static void PrintDiagnostics(DiagnosticManager diagnosticManager)
     {
-        foreach (var diagnostic in diagnosticList)
+        foreach (var diagnostic in diagnosticManager)
         {
             Console.ForegroundColor = diagnostic.Severity == DiagnosticSeverity.Error
                 ? ConsoleColor.Red

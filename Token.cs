@@ -1,4 +1,4 @@
-namespace LoxInterpreter.Token;
+namespace LoxInterpreter.Abstractions;
 
 public enum TokenType
 {
