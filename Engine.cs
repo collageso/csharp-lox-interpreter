@@ -18,7 +18,6 @@ public class ExecutionResult
 
 public class Engine
 {
-
     public ExecutionResult Execute(string source)
     {
         var diagnosticManager = new DiagnosticManager();

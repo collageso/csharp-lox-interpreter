@@ -9,8 +9,8 @@ public class Lexer
     private readonly List<Token> _tokens = new();
     private readonly DiagnosticManager _diagnosticManager;
 
-    private int _start = 0;
-    private int _current = 0;
+    private int _startIndex = 0;
+    private int _currentIndex = 0;
     private int _currentLine = 1;
     private int _startColumn = 1;
     private int _currentColumn = 1;
@@ -26,7 +26,7 @@ public class Lexer
     {
         while (!IsAtEnd())
         {
-            _start = _current;
+            _startIndex = _currentIndex;
             _startColumn = _currentColumn;
             ScanToken();
         }
@@ -51,6 +51,10 @@ public class Lexer
             case '+': AddToken(TokenType.PLUS); break;
             case ';': AddToken(TokenType.SEMICOLON); break;
             case '*': AddToken(TokenType.STAR); break;
+            case '!': AddToken(Match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
+            case '=': AddToken(Match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
+            case '<': AddToken(Match('<') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
+            case '>': AddToken(Match('>') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
 
             case ' ':
             case '\r':
@@ -68,21 +72,37 @@ public class Lexer
         }
     }
 
-    private bool IsAtEnd() => _current >= _source.Length;
+    private bool IsAtEnd() => _currentIndex >= _source.Length;
 
     private char Advance()
     {
         _currentColumn++;
-        return _source[_current++];
+        return _source[_currentIndex++];
     }
 
     private void AddToken(TokenType type) => AddToken(type, null);
 
     private void AddToken(TokenType type, object? literal)
     {
-        string lexeme = type == TokenType.EOF ? "" : _source.Substring(_start, _current - _start);
+        string lexeme = type == TokenType.EOF ? "" : _source.Substring(_startIndex, _currentIndex - _startIndex);
         int column = type == TokenType.EOF ? _currentColumn : _startColumn;
 
         _tokens.Add(new Token(type, lexeme, literal, _currentLine, column));
+    }
+
+    private bool Match(char expected)
+    {
+        if (IsAtEnd())
+        {
+            return false;
+        }
+
+        if (_source[_currentIndex] != expected)
+        {
+            return false;
+        }
+
+        _currentIndex++;
+        return true;
     }
 }
