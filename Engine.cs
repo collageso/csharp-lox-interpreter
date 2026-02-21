@@ -1,6 +1,6 @@
 using LoxInterpreter.Reporting;
 using LoxInterpreter.Scanning;
-using LoxInterpreter.Abstractions;
+using LoxInterpreter.Parsing;
 
 namespace LoxInterpreter.Runtime;
 
@@ -22,8 +22,10 @@ public class Engine
     {
         var diagnosticManager = new DiagnosticManager();
         var lexer = new Lexer(source, diagnosticManager);
-        List<Token> tokens = lexer.ScanTokens();
+        var tokens = lexer.ScanTokens();
+        var parser = new Parser(tokens, diagnosticManager);
+        var expression = parser.Parse();
 
-        return new ExecutionResult(diagnosticManager, tokens);
+        return new ExecutionResult(diagnosticManager, expression);
     }
 }

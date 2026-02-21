@@ -1,6 +1,8 @@
 ﻿using LoxInterpreter.Reporting;
 using LoxInterpreter.Runtime;
 using LoxInterpreter.Abstractions;
+using LoxInterpreter.Ast;
+using LoxInterpreter.Tools;
 
 namespace LoxInterpreter.Cli;
 
@@ -91,6 +93,10 @@ public class Program
             {
                 Console.WriteLine(token.ToString());
             }
+        }
+        else if (value is Expr expr)
+        {
+            Console.WriteLine(new AstPrinter().Print(expr));
         }
         else
         {

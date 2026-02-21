@@ -1,4 +1,5 @@
 using System.Collections;
+using LoxInterpreter.Abstractions;
 
 namespace LoxInterpreter.Reporting;
 
@@ -49,5 +50,10 @@ public class DiagnosticManager : IEnumerable<Diagnostic>
     public void ReportUnterminatedString(int line, int column)
     {
         Report(line, column, "Unterminated string literal.");
+    }
+
+    public void ReportParseError(Token token, string message)
+    {
+        Report(token.Line, token.Column, message, DiagnosticSeverity.Error);
     }
 }
